@@ -1,0 +1,45 @@
+﻿@model SpiralViewModel
+
+@{
+    var directionsList = Direction.PopulateDirections();
+}
+
+<form action="/Spiral" method="get">
+
+    <fieldset>
+        <p>
+            Start Direction
+            @Html.DropDownListFor(n => n.OriginalDirection,
+                     new SelectList(directionsList, "DirectionValue", "DirectionName"))
+        </p>
+        <p>
+            Clockwise?  @Html.CheckBoxFor(m => m.Clockwise)
+        </p>
+        <p>
+            Spiral End Number @Html.TextBoxFor(m => m.FinalNumber)
+
+        </p>
+
+        <p><input type="submit" value="Generate Spiral" /> </p>
+
+    </fieldset>
+
+</form>
+
+
+@if (Model == null || Model?.Items.Count() <= 0 || string.IsNullOrWhiteSpace(Model.OriginalDirection) || !Model.FinalNumber.HasValue || Model.FinalNumber.Value <= 0 || Model.FinalNumber.Value >= 1000)
+{
+    <p><em>Please select a direction, and enter a number between 1 and 1000</em></p>
+}
+else
+{
+    @foreach (var yVal in Model.Items.Select(obj => obj.y).Distinct().OrderByDescending(obj => obj))
+    {
+        <div style="display:flex">
+            @foreach (var col in Model.Items.Where(obj => obj.y == yVal).OrderBy(obj => obj.x))
+            {
+                <div class="col">@col.value</div>
+            }
+        </div>
+    }
+}
